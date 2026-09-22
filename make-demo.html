@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Demo Link Generator | SitePilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#0B2B2C; --text:#2F4A4B; --muted:#5B7273; --primary:#0F6B67; --line:#E3EAE6; --cream:#FBF8F3; --mint:#CDEBE3; --wa:#1DA851; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--cream); color: var(--text); font: 400 16px/1.6 "Plus Jakarta Sans", system-ui, sans-serif; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 20px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    h1 { grid-column: 1 / -1; font: 500 clamp(1.8rem, 1.2rem + 2vw, 2.6rem)/1.15 Fraunces, serif; color: var(--ink); margin: 0; }
+    h1 + p { grid-column: 1 / -1; margin: -20px 0 0; color: var(--muted); }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: 0 8px 30px rgba(11,43,44,.06); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .full { grid-column: 1 / -1; }
+    label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ink); }
+    label small { font-weight: 400; color: var(--muted); }
+    input, select, textarea { width: 100%; min-height: 48px; padding: 10px 14px; font: 500 15px/1.4 "Plus Jakarta Sans", system-ui, sans-serif; color: var(--ink); background: var(--cream); border: 1.5px solid var(--line); border-radius: 10px; }
+    textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(15,107,103,.12); background: #fff; }
+    h2 { font: 600 1.05rem/1.3 "Plus Jakarta Sans", sans-serif; color: var(--ink); margin: 0 0 16px; }
+    .link { word-break: break-all; font-size: 13.5px; background: var(--cream); border: 1px dashed var(--line); padding: 12px 14px; border-radius: 10px; color: var(--primary); }
+    .btns { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 26px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 999px; font: 600 14.5px/1 "Plus Jakarta Sans", system-ui, sans-serif; border: 1.5px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn:hover { border-color: var(--primary); color: var(--primary); }
+    .btn--primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn--primary:hover { background: #0B5754; color: #fff; }
+    .btn--wa { background: var(--wa); border-color: var(--wa); color: #fff; }
+    .btn--wa:hover { filter: brightness(.95); color: #fff; }
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px; font-size: 14px; transition: all .25s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Demo link generator</h1>
+    <p>Fill in a clinic's details from the lead sheet, then send them their own personalised website preview.</p>
+
+    <form class="card grid" id="f" autocomplete="off">
+      <label class="full">Clinic name <input name="n" required placeholder="Smile World Dental" /></label>
+      <label>Doctor name <input name="d" placeholder="Dr. Ritika Sharma" /></label>
+      <label>Doctor photo
+        <select name="g"><option value="f">Female</option><option value="m">Male</option></select>
+      </label>
+      <label class="full">Area / address <small>(shown on site and map)</small><input name="a" placeholder="Gaur City 2, Greater Noida West" /></label>
+      <label>Clinic phone <input name="p" inputmode="numeric" placeholder="9873577568" /></label>
+      <label>Qualification <input name="q" placeholder="BDS, MDS" /></label>
+      <label>Google rating <input name="r" inputmode="decimal" placeholder="4.8" /></label>
+      <label>No. of reviews <input name="rv" inputmode="numeric" placeholder="508" /></label>
+      <label>Years of experience <input name="y" inputmode="numeric" placeholder="12" /></label>
+    </form>
+
+    <section class="card" aria-live="polite">
+      <h2>1. Personalised preview link</h2>
+      <div class="link" id="link"></div>
+      <div class="btns">
+        <a class="btn btn--primary" id="open" target="_blank" rel="noopener">Open preview</a>
+        <button class="btn" type="button" id="copyLink">Copy link</button>
+      </div>
+
+      <h2>2. WhatsApp message for the clinic</h2>
+      <label>Message <small>(edit if you like)</small><textarea id="msg"></textarea></label>
+      <div class="btns">
+        <a class="btn btn--wa" id="sendWa" target="_blank" rel="noopener">Send on WhatsApp</a>
+        <button class="btn" type="button" id="copyMsg">Copy message</button>
+      </div>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (function () {
+      var f = document.getElementById('f');
+      var base = location.href.replace(/make-demo\.html.*$/, '');
+      var edited = false;
+      var msgEl = document.getElementById('msg');
+      msgEl.addEventListener('input', function () { edited = true; });
+
+      function build() {
+        var data = new FormData(f), qs = new URLSearchParams();
+        var hasDoc = String(data.get('d') || '').trim() !== '';
+        data.forEach(function (v, k) {
+          v = String(v).trim();
+          if (k === 'g' && !hasDoc) return; // no doctor named -> site shows the team instead
+          if (v) qs.set(k, k === 'p' ? v.replace(/\D/g, '').slice(-10) : v);
+        });
+        var url = base + (qs.toString() ? '?' + qs.toString() : '');
+        var name = data.get('n') || 'your clinic';
+        var doc = (data.get('d') || '').trim();
+        document.getElementById('link').textContent = url;
+        document.getElementById('open').href = url;
+        if (!edited) {
+          msgEl.value =
+            'Namaste ' + (doc || 'Doctor') + ' 🙏\n\n' +
+            'Main Nitin, Noida se web developer hoon. Maine ' + name + ' ke liye ek free sample website banayi hai: online appointment booking, WhatsApp button, treatments & prices, aur Google Maps ke saath.\n\n' +
+            'Yahan dekhiye 👇\n' + url + '\n\n' +
+            'Pasand aaye to 7 din mein live kar sakta hoon. Kya 10 minute baat ho sakti hai?';
+        }
+        var phone = (data.get('p') || '').replace(/\D/g, '').slice(-10);
+        var wa = document.getElementById('sendWa');
+        wa.href = 'https://wa.me/' + (phone.length === 10 ? '91' + phone : '') + '?text=' + encodeURIComponent(msgEl.value);
+      }
+      f.addEventListener('input', build);
+      msgEl.addEventListener('input', build);
+      build();
+
+      function toast(t) { var el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); setTimeout(function () { el.classList.remove('show'); }, 1600); }
+      function copy(text, label) {
+        (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { toast(label + ' copied'); }, function () { toast('Select and copy manually'); });
+      }
+      document.getElementById('copyLink').onclick = function () { copy(document.getElementById('link').textContent, 'Link'); };
+      document.getElementById('copyMsg').onclick = function () { copy(msgEl.value, 'Message'); };
+    })();
+  </script>
+</body>
+</html>
