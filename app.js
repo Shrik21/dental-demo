@@ -15,7 +15,7 @@
   var qs = new URLSearchParams(location.search);
   var get = function (k, d) { var v = (qs.get(k) || '').trim(); return v || d; };
 
-  var digits = get('p', '9876543210').replace(/\D/g, '').slice(-10);
+  var digits = get('p', '7376438478').replace(/\D/g, '').slice(-10);
   // Personalised link without a named doctor -> talk about the team, show a neutral clinic photo
   var teamMode = qs.has('n') && !get('d', '');
   var cfg = {
